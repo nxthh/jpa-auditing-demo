@@ -1,0 +1,14 @@
+# Tests run on in-memory H2 so they never need Docker.
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+  docker:
+    compose:
+      enabled: false

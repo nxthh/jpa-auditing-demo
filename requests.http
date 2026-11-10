@@ -1,0 +1,62 @@
+### ============ PART 1 - JPA AUDITING ============
+
+### 1. Slide example: create "Dara" -> createdBy = admin
+POST http://localhost:8080/api/students/demo
+
+### 2. Create a student as a specific user
+POST http://localhost:8080/api/students
+Content-Type: application/json
+X-User: alice
+
+{ "name": "Bopha", "email": "bopha@gmail.com", "age": 25, "gender": "Female", "major": "IT", "score": 88 }
+
+### 3. Update it as another user -> lastModifiedBy = bob, createdBy stays alice
+#    (replace 9 with the id returned by step 2)
+PUT http://localhost:8080/api/students/9
+Content-Type: application/json
+X-User: bob
+
+{ "name": "Bopha Chan", "email": "bopha@gmail.com", "age": 25, "gender": "Female", "major": "IT", "score": 95 }
+
+### 4. Seeded rows were created by "system"
+GET http://localhost:8080/api/students/1
+
+### 5. Category also extends BaseEntity -> same audit columns
+POST http://localhost:8080/api/categories
+Content-Type: application/json
+X-User: carol
+
+{ "categoryName": "Monitor" }
+
+
+### ============ PART 2 - CRITERIA API ============
+
+### 6. Raw Criteria API: age > 20
+GET http://localhost:8080/api/criteria/students/older-than?age=20
+
+### 7. SQL slide: score >= 50 AND major = 'IT' ORDER BY score DESC
+GET http://localhost:8080/api/criteria/students/top?major=IT&minScore=50
+
+
+### ============ PART 3 - JPA SPECIFICATION ============
+
+### 8. BEFORE: derived queries
+GET http://localhost:8080/api/students/search/derived?name=Dara&age=22
+
+### 9. Slide: WHERE category = 'Laptop'
+GET http://localhost:8080/api/products/by-category?category=Laptop
+
+### 10. Dynamic search - no filters (returns all)
+GET http://localhost:8080/api/students/search
+
+### 11. Dynamic search - name only (case-insensitive LIKE)
+GET http://localhost:8080/api/students/search?name=dar
+
+### 12. Dynamic search - all 3 filters
+GET http://localhost:8080/api/students/search?name=a&gender=Female&age=20
+
+### 13. Advanced: composed specs + paging + sorting
+GET http://localhost:8080/api/students/search/advanced?major=IT&minScore=50&sortBy=score&direction=DESC&page=0&size=3
+
+### 14. Products: composed specs
+GET http://localhost:8080/api/products/search?category=Laptop&minPrice=1000&maxPrice=1500
