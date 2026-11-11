@@ -21,6 +21,14 @@ spring:
     compose:
       file: docker-compose.yml
       lifecycle-management: start_only   # start Postgres on bootRun, leave it running afterwards
+      skip:
+        in-tests: false                  # also start/use the Docker Postgres when running tests
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
 
 server:
   port: 8080

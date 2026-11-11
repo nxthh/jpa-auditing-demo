@@ -4,6 +4,7 @@ import com.example.jpademo.dto.PageResponse;
 import com.example.jpademo.dto.StudentRequest;
 import com.example.jpademo.entity.Student;
 import com.example.jpademo.service.StudentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Students")
 @RestController
 @RequestMapping("/api/students")
 @RequiredArgsConstructor

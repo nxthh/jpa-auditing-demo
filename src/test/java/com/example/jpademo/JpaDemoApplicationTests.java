@@ -6,12 +6,14 @@ import com.example.jpademo.service.StudentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional   // every test rolls back, so the demo data in Postgres stays untouched
 class JpaDemoApplicationTests {
 
     @Autowired
@@ -26,8 +28,10 @@ class JpaDemoApplicationTests {
 
         assertNotNull(saved.getCreatedDate());
         assertNotNull(saved.getLastModifiedDate());
-        assertEquals("system", saved.getCreatedBy());      // no HTTP request in tests
-        assertEquals("system", saved.getLastModifiedBy());
+        // @SpringBootTest binds a mock HTTP request (no X-User header) -> auditor is "admin".
+        // "system" only appears when there is no request at all (e.g. the startup DataSeeder).
+        assertEquals("admin", saved.getCreatedBy());
+        assertEquals("admin", saved.getLastModifiedBy());
     }
 
     @Test

@@ -11,7 +11,7 @@ Requires Docker (Desktop or Engine) running.
 gradle wrapper --gradle-version 9.1.0
 
 ./gradlew bootRun      # Spring Boot auto-starts docker-compose.yml (Postgres) for you
-./gradlew test         # tests use in-memory H2, no Docker needed
+./gradlew test         # tests run against the same Docker Postgres (rolled back after each test)
 ```
 
 Or start the database yourself first:
@@ -26,6 +26,7 @@ docker compose down -v         # stop AND wipe all data
 | Service | URL / port | Credentials |
 |---|---|---|
 | API | http://localhost:8080 | - |
+| Swagger UI | http://localhost:8080/swagger-ui.html | click **Authorize** to set the `X-User` header |
 | PostgreSQL | `localhost:5433` (container listens on 5432 internally), db `demo_db` | `demo_user` / `demo_pass` |
 | pgAdmin | http://localhost:5050 | no login; add server host `postgres`, port `5432`, user/pass above |
 
@@ -65,7 +66,20 @@ Connection settings live in `application.yml` and can be overridden with env var
 
 ## Notes
 
-* Audit user comes from the `X-User` header; no header -> `admin` (as in the slide); seeder/tests -> `system`.
+* Audit user comes from the `X-User` header; no header -> `admin` (as in the slide); seeder (no HTTP request) -> `system`; tests (mock request) -> `admin`.
 * Two small fixes versus the slides so the code compiles: `root.<String>get("name")` before `cb.lower(...)` and `root.<Integer>get("age")` before comparisons.
 * `createdDate` / `createdBy` are `updatable = false` so they can never be overwritten.
 * The slide-style `search(...)` and the composed `Specification.allOf(...)` version return the same results.
+
+## Can't see the tables?
+
+Tables are created when the app starts (`ddl-auto: update`), in database `demo_db`, schema `public`.
+
+* Run the app first (`./gradlew bootRun`). `./gradlew test` also uses the Docker Postgres, but rolls its data back.
+* Connect to host `localhost`, port **5433**, database **demo_db** (not `postgres`), user `demo_user`, password `demo_pass`.
+* In DBeaver / pgAdmin / IntelliJ expand `demo_db` -> `Schemas` -> `public` -> `Tables` and refresh. Some tools only show the `public` schema if "show all databases/schemas" is ticked.
+* Check from the terminal:
+
+```bash
+docker exec -it jpa-demo-postgres psql -U demo_user -d demo_db -c "\dt"
+```

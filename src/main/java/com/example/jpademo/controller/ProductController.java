@@ -3,6 +3,7 @@ package com.example.jpademo.controller;
 import com.example.jpademo.dto.ProductRequest;
 import com.example.jpademo.entity.Product;
 import com.example.jpademo.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+@Tag(name = "Products")
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
